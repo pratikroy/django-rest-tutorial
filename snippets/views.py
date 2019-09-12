@@ -2,6 +2,7 @@ from snippets.models import Snippet
 from snippets.serializers import SnippetSerializer, UserSerializer
 from rest_framework import generics, mixins
 from rest_framework import permissions
+from snippets.permissions import IsOwnerOrReadOnly
 
 from django.contrib.auth.models import User
 # from rest_framework import status
@@ -93,7 +94,8 @@ class SnippetDetail(mixins.RetrieveModelMixin,
                     generics.GenericAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                        IsOwnerOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
