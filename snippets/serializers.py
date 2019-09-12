@@ -4,7 +4,13 @@ from snippets.models import LANGUAGE_CHOICES, STYLE_CHOICES, Snippet
 class SnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Snippet
-        fields = ['id', 'title', 'code', 'linenos', 'language', 'style']
+        fields = ['id',
+                'created',
+                'title',
+                'code',
+                'linenos',
+                'language',
+                'style']
 
     """
     The create() and update() methods define how fully fledged instances are
