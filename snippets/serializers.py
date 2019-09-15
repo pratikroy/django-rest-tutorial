@@ -2,19 +2,16 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from snippets.models import LANGUAGE_CHOICES, STYLE_CHOICES, Snippet
 
-class SnippetSerializer(serializers.ModelSerializer):
+class SnippetSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+    highlight = serializers.HyperlinkedIdentityField(
+                view_name='snippet-highlight',
+                format='html')
 
     class Meta:
         model = Snippet
-        fields = ['id',
-                'owner',
-                'created',
-                'title',
-                'code',
-                'linenos',
-                'language',
-                'style']
+        fields = ['url', 'id', 'highlight', 'owner', 'created', 'title',
+                'code', 'linenos', 'language', 'style']
 
     """
     The create() and update() methods define how fully fledged instances are
@@ -35,9 +32,11 @@ class SnippetSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UserSerializer(serializers.ModelSerializer):
-    snippets = serializers.PrimaryKeyRelatedField(many=True,
-                                                queryset=Snippet.objects.all())
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    snippets = serializers.HyperlinkedRelatedField(many=True,
+                view_name='snippet-detail',
+                queryset=Snippet.objects.all())
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'snippets']
+        fields = ['url', 'id', 'username', 'snippets']

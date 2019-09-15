@@ -1,13 +1,16 @@
 from snippets.models import Snippet
-from snippets.serializers import SnippetSerializer, UserSerializer
-from rest_framework import generics, mixins
 from rest_framework import permissions
-from snippets.permissions import IsOwnerOrReadOnly
-
+from rest_framework import renderers
+from rest_framework.reverse import reverse
 from django.contrib.auth.models import User
+from rest_framework import generics, mixins
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from snippets.permissions import IsOwnerOrReadOnly
+from snippets.serializers import SnippetSerializer, UserSerializer
+
+
 # from rest_framework import status
-# from rest_framework.decorators import api_view
-# from rest_framework.response import Response
 
 
 # First demo using function based views.
@@ -115,3 +118,25 @@ class UserList(generics.ListAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+
+"""
+We are using rest frameworks reverse function in order to return fully-qualified
+URLs. URL patterns are identified by convenience names.
+"""
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+        'snippets': reverse('snippet-list', request=request, format=format)
+    })
+
+
+class SnippetHighlight(generics.GenericAPIView):
+    queryset = Snippet.objects.all()
+    renderer_class = [renderers.StaticHTMLRenderer]
+
+    def get(self, request, *args, **kwargs):
+        snippet = self.get_object()
+        return Response(snippet.highlighted)

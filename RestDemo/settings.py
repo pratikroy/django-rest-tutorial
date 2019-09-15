@@ -53,6 +53,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'RestDemo.urls'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -121,5 +126,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = 'snippets'
-LOGOUT_REDIRECT_URL = 'snippets'
+LOGIN_REDIRECT_URL = 'snippet-list'
+LOGOUT_REDIRECT_URL = 'snippet-list'
